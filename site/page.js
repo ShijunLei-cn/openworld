@@ -40,7 +40,7 @@ function setLang(to, chosen = false) {
         }
     }
     // a picture's words and a control's name, where they are written beside it (data-zh-alt, data-zh-label)
-    for (const [attr, key] of [['alt', 'Alt'], ['aria-label', 'Label']]) {
+    for (const [attr, key] of [['alt', 'Alt'], ['aria-label', 'Label'], ['data-soon', 'Soon']]) {
         for (const el of document.querySelectorAll(`[data-zh-${key.toLowerCase()}]`)) {
             if (el.dataset[`en${key}`] === undefined) el.dataset[`en${key}`] = el.getAttribute(attr) ?? ''
             el.setAttribute(attr, to === 'zh' ? el.dataset[`zh${key}`] : el.dataset[`en${key}`])
@@ -229,13 +229,24 @@ if (explain) {
     }))
 }
 
-// ------------------------------------------------------------------ the waitlist: sent to the mailing list, thanked in place
+// ------------------------------------------------------------------ the waitlist: sent to our own server, its answer shown
 document.querySelectorAll('form.wl').forEach((form) => {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault()
-        // the mailing list's subscribe address goes in data-endpoint once the list exists
-        if (form.dataset.endpoint) fetch(form.dataset.endpoint, { method: 'POST', body: new FormData(form), mode: 'no-cors' }).catch(() => {})
-        form.classList.add('sent')
+        if (!form.dataset.endpoint) return
+        const button = form.querySelector('button[type=submit]')
+        const data = new FormData(form)
+        button.disabled = true
+        form.classList.remove('failed')
+        // JSON sent as text/plain, so the cross-origin POST needs no preflight; the API answers { ok, error }
+        let ok = false
+        try {
+            const body = JSON.stringify({ email: data.get('email'), tags: data.getAll('tag'), lang, page: location.pathname, website: data.get('website') })
+            const r = await fetch(form.dataset.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body })
+            ok = r.ok && (await r.json()).ok === true
+        } catch {}
+        button.disabled = false
+        form.classList.add(ok ? 'sent' : 'failed')
     })
 })
 

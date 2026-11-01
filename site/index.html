@@ -8,9 +8,8 @@
     <meta property="og:title" content="OpenWorld">
     <meta property="og:description" content="A pixel-art open-world RPG you play in the browser. Try anything: what nobody wrote, the world works out and keeps.">
     <meta property="og:image" content="media/hero.jpg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@600&display=block" rel="stylesheet">
+    <link rel="preload" href="fonts/pixelify-sans-600.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="fonts/fonts.css">
     <link rel="icon" type="image/png" sizes="60x60" href="icons/favicon.png">
     <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
     <link rel="stylesheet" href="base.css">
@@ -41,11 +40,14 @@
     <section class="hero on-dark" id="top">
         <video class="backdrop" data-auto muted loop playsinline preload="auto" poster="media/hero.jpg"><source src="media/hero.mp4" type="video/mp4"></video>
         <div class="hero-inner">
+            <!-- the latest post, above the name: the news band below keeps them all -->
+            <a class="news-pill" href="news/launch/" data-href-zh="news/launch/zh.html"><b data-zh="新">New</b><span data-zh="一个可自我学习的进化世界">A world that learns as it goes</span><span class="go" aria-hidden="true">&rarr;</span></a>
             <h1 class="logo">OpenWorld</h1>
             <p class="tagline" data-zh="想到什么，就试什么" data-zh-keep="想到什么，|就试什么">Try anything</p>
             <div class="hero-actions">
-                <a class="btn primary" href="http://35.239.4.44:5175/" data-zh="试玩 Demo">Play the demo</a>
+                <a class="btn primary" href="play/" data-zh="试玩 Demo">Play the demo</a>
                 <a class="btn" href="#join" data-zh="加入等候名单">Join the waitlist</a>
+                <a class="btn" href="https://github.com/SihanXU/openworld" target="_blank" rel="noopener"><svg class="gh-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span data-zh="代码">Code</span></a>
                 <a class="btn" href="https://x.com/intent/follow?screen_name=SihanXuOfficial" target="_blank" rel="noopener"><svg class="x-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span data-zh="在 X 上关注">Follow on X</span></a>
             </div>
         </div>
@@ -356,7 +358,7 @@
   title        = {OpenWorld: A Large Symbolic World},
   author       = {{OpenWorld Team}},
   year         = {2026},
-  howpublished = {\url{https://sihanxu.me/openworld/}}
+  howpublished = {\url{https://openworldrpg.ai/}}
 }</code></pre>
             </div>
         </div>
@@ -366,17 +368,22 @@
         <video class="backdrop" data-auto muted loop playsinline preload="metadata" poster="media/hero.jpg"><source src="media/hero.mp4#t=6.8" type="video/mp4"></video>
         <div class="container">
             <h2 data-zh="开放时第一个知道" data-zh-keep="开放时|第一个知道">Be there when it opens</h2>
-            <form class="wl" method="post" data-endpoint="">
+            <!-- the list is kept on the team's own server (the openworld-waitlist API); a role is one of its tags -->
+            <form class="wl" method="post" data-endpoint="https://waitlist.openworldrpg.ai/v1/waitlist">
                 <div class="wl-row">
                     <input type="email" name="email" placeholder="you@example.com" required aria-label="Email">
+                    <!-- left empty by people, filled by bots -->
+                    <input type="text" name="website" class="wl-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
                     <button type="submit" data-zh="加入等候名单">Join the waitlist</button>
+                    <a class="btn" href="https://github.com/SihanXU/openworld" target="_blank" rel="noopener"><svg class="gh-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span data-zh="代码">Code</span></a>
                 </div>
                 <div class="wl-roles"><span class="q" data-zh="我想">I'm here to</span>
                     <input type="checkbox" id="j1" name="tag" value="player"><label for="j1" data-zh="玩">play</label>
                     <input type="checkbox" id="j2" name="tag" value="research"><label for="j2" data-zh="看研究">read the research</label>
                     <input type="checkbox" id="j3" name="tag" value="maker"><label for="j3" data-zh="做一个世界">make a world</label>
                 </div>
-                <p class="wl-done" data-zh="谢谢——请到邮箱里确认。">Thanks — check your inbox to confirm.</p>
+                <p class="wl-done" data-zh="预约成功！">You're on the list!</p>
+                <p class="wl-error" data-zh="网络繁忙，请稍后再试">Something went wrong. Please try again.</p>
             </form>
         </div>
         <!-- the footer, over the same film -->

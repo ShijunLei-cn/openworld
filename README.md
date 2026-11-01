@@ -1,4 +1,4 @@
-# OpenWorld
+# OpenWorld RPG
 
 [![check](https://github.com/SihanXU/openworld/actions/workflows/check.yml/badge.svg)](https://github.com/SihanXU/openworld/actions/workflows/check.yml)
 [![wiki](https://github.com/SihanXU/openworld/actions/workflows/wiki.yml/badge.svg)](https://github.com/SihanXU/openworld/actions/workflows/wiki.yml)
@@ -9,6 +9,8 @@ OpenWorld is a pixel-art open-world RPG that runs in the browser, together with 
 on. Everything in the world follows rules written as data. When a player tries something no rule covers, a
 language model can propose a new rule, which the engine validates before applying it. The game is fully playable
 without a model.
+
+**Play it at [openworldrpg.ai](https://openworldrpg.ai/play/)** · [project page](https://openworldrpg.ai/)
 
 <table>
   <tr>
@@ -239,7 +241,7 @@ If you use OpenWorld in your research, please cite:
   title        = {OpenWorld: A Large Symbolic World},
   author       = {{OpenWorld Team}},
   year         = {2026},
-  howpublished = {\url{https://sihanxu.me/openworld/}}
+  howpublished = {\url{https://openworldrpg.ai/}}
 }
 ```
 
