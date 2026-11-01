@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GPT 龙娘 · 汉服皮肤预览</title>
+<style>
+:root{font-family:"Microsoft YaHei",sans-serif;background:#201c33;color:#f6f0ff;color-scheme:dark}body{margin:0}main{max-width:920px;margin:auto;padding:32px 20px 60px}h1{margin-bottom:8px}p{line-height:1.7;color:#d4c9ea}.box{background:#302944;border:1px solid #685783;border-radius:12px;padding:20px;margin:20px 0}.preview{display:flex;flex-wrap:wrap;gap:24px}.tile{text-align:center}.tile canvas{display:block;width:128px;height:128px;image-rendering:pixelated;background:#4c3f62;border-radius:8px;margin-bottom:8px}.controls{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-bottom:20px}select,button{font:inherit;color:inherit;background:#514269;border:1px solid #a890c6;border-radius:6px;padding:7px 12px}.portraits{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}figure{margin:0;background:#453856;border-radius:8px;padding:10px;text-align:center}figure img{width:100%;height:auto;display:block}.sheet{width:min(100%,720px);display:block;margin:auto}#status{min-height:1.5em}
+</style>
+</head>
+<body><main>
+<h1>GPT 龙娘 · 汉服皮肤</h1>
+<p>白发紫瞳、龙角、龙翼和尾巴，配浅紫交领汉服；四方向与鲸鱼娘配套。</p>
+<div class="box">
+<div class="controls"><label>造型版本 <select id="variant"><option value="a">A 稿（已选）</option><option value="original">原始参考图</option></select></label><label>画面尺寸 <select id="resolution"><option value="64">64×64</option><option value="32">32×32</option><option value="16">16×16（露米尺寸）</option></select></label><button id="toggle" type="button">暂停动画</button><span id="status">正在加载图集…</span></div>
+<div class="preview">
+<div class="tile"><canvas width="64" height="64" data-direction="down"></canvas>正面</div>
+<div class="tile"><canvas width="64" height="64" data-direction="up"></canvas>背面</div>
+<div class="tile"><canvas width="64" height="64" data-direction="left"></canvas>左侧</div>
+<div class="tile"><canvas width="64" height="64" data-direction="right"></canvas>右侧</div>
+</div><p>预览由大图实时缩放；16×16 下的辨识度和动画连贯性仍需逐帧视觉验收与像素精修。</p></div>
+<div class="box"><h2>对话立绘</h2><div class="portraits">
+<figure><img src="dragon-girl-portrait-neutral.png" alt="龙娘平静表情"><figcaption>平静</figcaption></figure>
+<figure><img src="dragon-girl-portrait-happy.png" alt="龙娘高兴表情"><figcaption>高兴</figcaption></figure>
+<figure><img src="dragon-girl-portrait-worried.png" alt="龙娘担心表情"><figcaption>担心</figcaption></figure>
+</div></div>
+<div class="box"><h2>四方向 A 稿</h2><p>从上至下为正面、左侧、背面、右侧；每行四帧。</p><img class="sheet" src="dragon-girl-original-reference-study-a.png" alt="用户选定的龙娘四方向 A 稿"></div>
+<p>独立素材预览，尚未接入游戏。</p>
+</main><script src="preview-atlas.js"></script><script src="preview-atlas-study-a.js"></script><script>
+const image=new Image(),canvases=[...document.querySelectorAll('canvas[data-direction]')],status=document.getElementById('status'),toggle=document.getElementById('toggle'),resolution=document.getElementById('resolution'),variant=document.getElementById('variant');
+let atlas=window.DRAGON_ATLAS_A,playing=true,ticking=false,frameNumber=0,lastFrameAt=0;
+function draw(){if(!image.complete||!image.naturalWidth)return;for(const canvas of canvases){const entry=atlas.frames[`${canvas.dataset.direction}_${frameNumber}`],f=entry.frame,p=entry.spriteSourceSize,s=entry.sourceSize,c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);c.imageSmoothingEnabled=false;c.drawImage(image,f.x,f.y,f.w,f.h,p.x/s.w*canvas.width,p.y/s.h*canvas.height,p.w/s.w*canvas.width,p.h/s.h*canvas.height)}status.textContent=`第 ${frameNumber+1} / 4 帧`}
+function tick(now){if(playing&&now-lastFrameAt>=300){frameNumber=(frameNumber+1)%4;lastFrameAt=now;draw()}requestAnimationFrame(tick)}
+toggle.addEventListener('click',()=>{playing=!playing;toggle.textContent=playing?'暂停动画':'播放动画'});resolution.addEventListener('change',()=>{for(const canvas of canvases)canvas.width=canvas.height=Number(resolution.value);draw()});variant.addEventListener('change',()=>{atlas=variant.value==='a'?window.DRAGON_ATLAS_A:window.DRAGON_ATLAS;status.textContent='正在加载图集…';image.src=atlas.meta.image});image.onload=()=>{draw();if(!ticking){ticking=true;requestAnimationFrame(tick)}};image.onerror=()=>{status.textContent='源图加载失败，请保持素材文件在同一目录。'};image.src=atlas.meta.image;
+</script></body></html>

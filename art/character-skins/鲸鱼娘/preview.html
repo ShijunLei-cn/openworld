@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>鲸鱼娘 · 原图等比例显示预览</title>
+  <style>
+    :root { color-scheme: dark; font-family: "Microsoft YaHei", sans-serif; background: #101d31; color: #edf6ff; }
+    body { margin: 0; }
+    main { max-width: 1000px; margin: auto; padding: 32px 20px 64px; }
+    h1 { margin: 0 0 8px; font-size: 26px; }
+    h2 { margin: 0 0 8px; font-size: 19px; }
+    p { line-height: 1.65; color: #bad0e8; }
+    .box { background: #172b45; border: 1px solid #365575; border-radius: 12px; padding: 20px; margin-top: 20px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; }
+    select, button { color: #edf6ff; background: #30597f; border: 1px solid #78a8d3; border-radius: 7px; padding: 8px 12px; }
+    button { cursor: pointer; }
+    .columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 20px; }
+    .panel { background: #203b58; border-radius: 9px; padding: 16px; min-width: 0; }
+    .directions { display: flex; flex-wrap: wrap; justify-content: space-around; gap: 8px; }
+    .tile { text-align: center; color: #d6e7f8; font-size: 13px; }
+    .stage { width: 94px; height: 92px; display: flex; align-items: end; justify-content: center;
+      margin: 0 auto 8px; border-radius: 6px; overflow: hidden; background-color: #304d3d;
+      background-image: linear-gradient(#ffffff14 1px, transparent 1px), linear-gradient(90deg, #ffffff14 1px, transparent 1px);
+      background-size: var(--tile, 48px) var(--tile, 48px); background-position: center bottom; }
+    canvas { display: block; image-rendering: pixelated; }
+    .note { margin-bottom: 0; }
+    .portraits { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+    figure { margin: 0; padding: 10px; border-radius: 8px; background: #203b58; text-align: center; }
+    figure img { display: block; width: 100%; height: auto; }
+    figcaption { color: #d6e7f8; }
+    .sheet { display: block; width: min(100%, 720px); height: auto; margin: auto; }
+    #status { min-height: 1.5em; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>鲸鱼娘 · 原图等比例显示</h1>
+  <p>只使用你喜欢的图二。角色保持原画比例，地图中的高度按 16 个世界单位模拟；镜头放大时，直接使用原图绘制，尽量保留细节。</p>
+  <div class="box">
+    <div class="controls">
+      <label for="zoom">模拟镜头倍数</label>
+      <select id="zoom"><option value="1">1 倍</option><option value="2">2 倍</option><option value="3" selected>3 倍</option><option value="4">4 倍</option></select>
+      <button type="button" id="toggle">暂停换帧</button>
+      <span id="status">正在加载图集…</span>
+    </div>
+    <div class="columns">
+      <section class="panel">
+        <h2>原图直接缩放</h2>
+        <p>保留原始图集，按地图大小直接绘制。</p>
+        <div class="directions" id="direct">
+          <div class="tile"><div class="stage"><canvas data-direction="down" data-method="direct"></canvas></div>正面</div>
+          <div class="tile"><div class="stage"><canvas data-direction="up" data-method="direct"></canvas></div>背面</div>
+          <div class="tile"><div class="stage"><canvas data-direction="left" data-method="direct"></canvas></div>左侧</div>
+          <div class="tile"><div class="stage"><canvas data-direction="right" data-method="direct"></canvas></div>右侧</div>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>先缩成 16 像素，再放大</h2>
+        <p>模拟先把角色存成低分辨率，供对照。</p>
+        <div class="directions" id="reduced">
+          <div class="tile"><div class="stage"><canvas data-direction="down" data-method="reduced"></canvas></div>正面</div>
+          <div class="tile"><div class="stage"><canvas data-direction="up" data-method="reduced"></canvas></div>背面</div>
+          <div class="tile"><div class="stage"><canvas data-direction="left" data-method="reduced"></canvas></div>左侧</div>
+          <div class="tile"><div class="stage"><canvas data-direction="right" data-method="reduced"></canvas></div>右侧</div>
+        </div>
+      </section>
+    </div>
+    <p id="size-note" class="note"></p>
+    <p class="note">预览模拟绘制像素，并非游戏截图。最终清晰度还受镜头、画布分辨率和屏幕设置影响。图集中四帧变化很小，行走动画尚未精修。</p>
+  </div>
+  <div class="box">
+    <h2>对话立绘</h2>
+    <p>和地图小人配套的平静、高兴、担心表情。</p>
+    <div class="portraits">
+      <figure><img src="whale-girl-portrait-neutral.png" alt="鲸鱼娘平静表情"><figcaption>平静</figcaption></figure>
+      <figure><img src="whale-girl-portrait-happy.png" alt="鲸鱼娘高兴表情"><figcaption>高兴</figcaption></figure>
+      <figure><img src="whale-girl-portrait-worried.png" alt="鲸鱼娘担心表情"><figcaption>担心</figcaption></figure>
+    </div>
+  </div>
+  <div class="box">
+    <h2>原始四方向图集</h2>
+    <p>所用的就是你喜欢的图二。原始图片没有被缩小或覆盖。</p>
+    <img class="sheet" src="whale-girl-source-4x4-v1.png" alt="鲸鱼娘正面、左侧、背面和右侧的原始图集">
+  </div>
+  <p>此页只是独立的显示方案预览，尚未接入游戏。</p>
+</main>
+<script src="preview-atlas.js"></script>
+<script>
+  const atlas = window.WHALE_ATLAS
+  const image = new Image()
+  const canvases = [...document.querySelectorAll('canvas[data-direction]')]
+  const status = document.getElementById('status')
+  const zoomControl = document.getElementById('zoom')
+  const sizeNote = document.getElementById('size-note')
+  const toggle = document.getElementById('toggle')
+  let playing = true
+  let frameNumber = 0
+  let lastFrameAt = 0
+
+  function paintOriginal(ctx, entry, factor) {
+    const { frame, spriteSourceSize: pos, sourceSize: size } = entry
+    const scale = 16 * factor / size.h
+    const left = (20 * factor - size.w * scale) / 2
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(image, frame.x, frame.y, frame.w, frame.h,
+      left + pos.x * scale, pos.y * scale, pos.w * scale, pos.h * scale)
+  }
+
+  function draw() {
+    if (!image.complete || !image.naturalWidth) return
+    const zoom = Number(zoomControl.value)
+    for (const canvas of canvases) {
+      const entry = atlas.frames[`${canvas.dataset.direction}_${frameNumber}`]
+      canvas.width = 20 * zoom
+      canvas.height = 16 * zoom
+      canvas.style.width = `${canvas.width}px`
+      canvas.style.height = `${canvas.height}px`
+      canvas.parentElement.style.setProperty('--tile', `${16 * zoom}px`)
+      const ctx = canvas.getContext('2d')
+      ctx.imageSmoothingEnabled = false
+      if (canvas.dataset.method === 'direct') {
+        paintOriginal(ctx, entry, zoom)
+      } else {
+        const low = document.createElement('canvas')
+        low.width = 20
+        low.height = 16
+        paintOriginal(low.getContext('2d'), entry, 1)
+        ctx.drawImage(low, 0, 0, low.width, low.height, 0, 0, canvas.width, canvas.height)
+      }
+    }
+    status.textContent = `第 ${frameNumber + 1} / 4 帧`
+    sizeNote.textContent = `当前模拟：角色高度 16 世界单位 × ${zoom} 倍镜头 ≈ ${16 * zoom} 个画布像素；角色宽度按原图比例约 19.2 世界单位，尾巴可以超出一格。`
+  }
+
+  function tick(now) {
+    if (playing && now - lastFrameAt >= 300) {
+      frameNumber = (frameNumber + 1) % 4
+      lastFrameAt = now
+      draw()
+    }
+    requestAnimationFrame(tick)
+  }
+
+  toggle.addEventListener('click', () => {
+    playing = !playing
+    toggle.textContent = playing ? '暂停换帧' : '继续换帧'
+  })
+  zoomControl.addEventListener('change', draw)
+  image.onload = () => { draw(); requestAnimationFrame(tick) }
+  image.onerror = () => { status.textContent = '无法加载图二原图，请保持预览文件与图集在同一目录。' }
+  image.src = atlas.meta.image
+</script>
+</body>
+</html>
